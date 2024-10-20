@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class App {
+public class Main {
 
   public static void main(String[] args) throws Exception {
     CrudTarefas crudTarefas = new CrudTarefas();
