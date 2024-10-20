@@ -3,7 +3,6 @@ import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
-
 import java.io.File;
 
 public class Arquivo<T extends Registro> {
@@ -15,7 +14,7 @@ public class Arquivo<T extends Registro> {
     String fileName;
     final int fimCabecalho = 4;
     // A partir seguindo basicamente o que o professor fez
-    HashExtensivel<ParIDEndereco> indiceDireto;
+    HashExtensivel<IDEndereco> indiceDireto;
 
     // Método Create
     public int create(T objeto) throws Exception {
@@ -24,6 +23,7 @@ public class Arquivo<T extends Registro> {
         // Pegar novo ID
         raf.seek(0);
         int proxId = raf.readInt() + 1;
+
         objeto.setId(proxId);
 
         // Ir para EOF
@@ -42,7 +42,7 @@ public class Arquivo<T extends Registro> {
         raf.close();
 
         // Atualizar hash extensivel com id / endereco
-        indiceDireto.create(new ParIDEndereco(proxId, endereco));
+        indiceDireto.create(new IDEndereco(proxId, endereco));
 
         return proxId;
     }
@@ -50,7 +50,7 @@ public class Arquivo<T extends Registro> {
     // Método Read
     public T read(int id) throws Exception {
         try (RandomAccessFile raf = new RandomAccessFile(this.fileName, "rw")) {
-            ParIDEndereco pid = indiceDireto.read(id);
+            IDEndereco pid = indiceDireto.read(id);
 
             if (pid != null) {
                 raf.seek(pid.getEndereco());
@@ -72,7 +72,6 @@ public class Arquivo<T extends Registro> {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Deu bobs na leitura de uma tarefa");
             e.printStackTrace();
         }
         return null;
@@ -83,7 +82,7 @@ public class Arquivo<T extends Registro> {
         RandomAccessFile raf = new RandomAccessFile(this.fileName, "rw");
         boolean success = false;
 
-        ParIDEndereco pie = indiceDireto.read(id);
+        IDEndereco pie = indiceDireto.read(id);
         if (pie != null) {
             // Let metadados do arquivo
             raf.seek(pie.getEndereco());
@@ -104,7 +103,7 @@ public class Arquivo<T extends Registro> {
         RandomAccessFile raf = new RandomAccessFile(this.fileName, "rw");
         boolean success = false;
 
-        ParIDEndereco pie = indiceDireto.read(novoObjeto.getId());
+        IDEndereco pie = indiceDireto.read(novoObjeto.getId());
         if (pie != null) {
             // Ler metadados
             raf.seek(pie.getEndereco());
@@ -131,7 +130,7 @@ public class Arquivo<T extends Registro> {
                     raf.write(array);
 
                     // Atualizar indice
-                    indiceDireto.update(new ParIDEndereco(novoObjeto.getId(), novoEndereco));
+                    indiceDireto.update(new IDEndereco(novoObjeto.getId(), novoEndereco));
                 }
             }
         }
@@ -142,20 +141,25 @@ public class Arquivo<T extends Registro> {
     // Método Construtor
     public Arquivo(Constructor<T> construtor, String fN) throws Exception {
         this.construtor = construtor;
-        this.diretorio = new File("dados");
+        this.diretorio = new File("./dados");
         if (!diretorio.exists()) {
             diretorio.mkdir();
         }
-        this.fileName = "dados/" + fN + ".db";
-        RandomAccessFile raf = new RandomAccessFile(this.fileName, "rw");
-        raf.seek(0);
-        raf.writeInt(0);
-        raf.close();
+        this.fileName = "./dados/" + fN + ".db";
+        File f = new File(this.fileName);
+        if (!f.exists()) {
+            RandomAccessFile raf = new RandomAccessFile(this.fileName, "rw");
+            raf.seek(0);
+            raf.writeInt(0);
+
+            raf.close();
+        }
         indiceDireto = new HashExtensivel<>(
-                ParIDEndereco.class.getConstructor(),
+                IDEndereco.class.getConstructor(),
                 4,
-                "dados/" + fN + ".hash_d.db",
-                "dados/" + fN + ".hash_c.db");
+                "./dados/" + fN + ".hash_d.db",
+                "./dados/" + fN + ".hash_c.db");
+
     }
 
     // Método que lista todas as entradas do arquivo
@@ -163,6 +167,8 @@ public class Arquivo<T extends Registro> {
         ArrayList<T> objects = new ArrayList<>();
         try (RandomAccessFile raf = new RandomAccessFile(this.fileName, "rw")) {
             long pos = fimCabecalho; // Ignora o cabeçalho inicial
+            if (fimCabecalho + 1 >= raf.length())
+                throw new Exception("Arquivo vazio");
             // Percorre todo o arquivo
             while (pos < raf.length()) {
                 raf.seek(pos);
@@ -179,11 +185,10 @@ public class Arquivo<T extends Registro> {
                     T obj = construtor.newInstance();
                     obj.fromByteArray(array); // Reconstrói o objeto a partir do array de bytes
                     objects.add(obj);
-
+                    pos = raf.getFilePointer();
+                } else {
+                    pos = raf.getFilePointer() + tamArq;
                 }
-
-                // Avança para o próximo registro
-                pos = raf.getFilePointer();
             }
         } catch (Exception e) {
             System.out.println("Erro ao listar os registros.");

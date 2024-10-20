@@ -3,12 +3,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Constructor;
+
 import java.io.DataInputStream;
 
 public class Categoria implements Registro {
 
     Arquivo categorias;
 
+    /*
+     * Used to store recorded Tasks from the Arquivo database
+     * Contains:
+     * id: Attribute given only by Arquivo to indicate its position
+     * nome:
+     */
     private int id;
 
     // Atributos da classe Categoria
@@ -43,7 +50,6 @@ public class Categoria implements Registro {
             dos.writeInt(this.id);
             dos.writeUTF(this.nome);
         } catch (Exception e) {
-            System.out.println("Deu bobs ao converter Tarefa para array de byte");
             System.out.println(e.getMessage());
         }
         return baos.toByteArray();
@@ -57,7 +63,6 @@ public class Categoria implements Registro {
             this.id = dis.readInt();
             this.nome = dis.readUTF();
         } catch (Exception e) {
-            System.out.println("Deu bobs ao converter vetor de byte pra objeto tarefa");
             e.printStackTrace();
         }
     }

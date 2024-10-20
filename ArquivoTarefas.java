@@ -1,63 +1,89 @@
-
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ArquivoTarefas extends Arquivo<Tarefa> {
-
-    HashExtensivel<ParNomeIDTarefa> indiceIndiretoNome;
+    /* Instanciando o Objeto "ArvoreBMais" */
+    ArvoreBMais<ID_com_IDTarefa> arvoreB;
 
     public ArquivoTarefas() throws Exception {
-        super(Tarefa.class.getConstructor(), "tarefas");
-
-        this.indiceIndiretoNome = new HashExtensivel<ParNomeIDTarefa>(
-                ParNomeIDTarefa.class.getConstructor(),
-                4,
-                "dados/" + "tarefas" + ".hash_e.db",
-                "dados/" + "tarefas" + ".hash_f.db");
+        super(Tarefa.class.getConstructor(), "arquivoTarefas");
+        try {
+            arvoreB = new ArvoreBMais<>(ID_com_IDTarefa.class.getConstructor(), 5, "./dados/ArvoreTarefas");
+        } catch (Exception e) {
+            throw new Exception("Erro na criação da Arvore");
+        }
     }
 
+    /* Método de Criação da Tarefa. Retornando o ID */
     @Override
     public int create(Tarefa tarefa) throws Exception {
-        int id = -1;
-        try {
-            id = super.create(tarefa);
-            tarefa.setId(id);
-            System.out.println("INICIO CRIAR\n\n\n");
-            indiceIndiretoNome.create(new ParNomeIDTarefa(tarefa.getNome(), id));
-            System.out.println("FIM CRIAR\n\n\n");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(indiceIndiretoNome);
+        int id = super.create(tarefa);
+        tarefa.setId(id);
+        arvoreB.create(new ID_com_IDTarefa(tarefa.getIDCategoria(), id));
         return id;
     }
 
-    public Tarefa read(String nome) throws Exception {
-        ParNomeIDTarefa t;
-        Tarefa t2 = new Tarefa();
-        try {
-            System.out.println(indiceIndiretoNome.read(nome.hashCode()));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Fudeu" + e.getMessage());
+    /* Método de Leitura. Lendo os ID's do ArrayList. Retorna as Tarefas */
+    public ArrayList<Tarefa> read(NomeId parNomeId) throws Exception {
+        ArrayList<Tarefa> t = new ArrayList<>();
+        ArrayList<ID_com_IDTarefa> id = arvoreB.read(new ID_com_IDTarefa(parNomeId.getId()));
+        for (int i = 0; i < id.size(); i++) {
+            t.add(super.read(id.get(i).getId2()));
         }
-        return t2;
+        return t;
     }
 
-    public boolean update(Tarefa updatedTask) throws Exception {
-        boolean success = false;
-        try {
-
-            success = super.update(updatedTask)
-                    ? indiceIndiretoNome.update(new ParNomeIDTarefa(updatedTask.getNome(), updatedTask.getId()))
-                    : false;
-
-        } catch (Exception e) {
-            System.out.println("Erro no Update do HashExtensivel " + e.getMessage());
+    /*
+     * Método de Atualização. Procura o nome da Tarefa desejada para poder muda-la.
+     * Retorna booleano.
+     */
+    public boolean update(NomeId parNomeId, String nomeTarefa, Tarefa updateTarefa) throws Exception {
+        ArrayList<Tarefa> t = read(parNomeId);
+        for (int i = 0; i < t.size(); i++) {
+            if (t.get(i).getNome().equals(nomeTarefa)) {
+                updateTarefa.setId(t.get(i).getId());
+                break;
+            }
         }
-
-        return success;
+        return super.update(updateTarefa);
     }
 
+    /*
+     * Método de Delete. Procura pelo nome da Tarefa para ser Deletada. Retorna um
+     * booleano.
+     */
+    public boolean delete(NomeId parNomeId, String nomeTarefa) throws Exception {
+        ArrayList<Tarefa> t = read(parNomeId);
+        Tarefa delete = null;
+        for (int i = 0; i < t.size(); i++) {
+            if (t.get(i).getNome().equals(nomeTarefa)) {
+                delete = t.get(i);
+                break;
+            }
+        }
+        if (delete == null) {
+            return false;
+        }
+        return super.delete(delete.getId()) && arvoreB.delete(new ID_com_IDTarefa(parNomeId.getId(), delete.getId()));
+    }
+
+    /* Método Listar as Tarefas */
+    public void listar() throws Exception {
+        try {
+            ArrayList<Tarefa> categorias = super.list();
+            if (categorias.isEmpty()) {
+                throw new Exception("Categorias ainda não foram criadas");
+            }
+            for (int i = 0; i < categorias.size(); i++) {
+                Tarefa tarefa = categorias.get(i);
+                System.out.println("Nome da Tarefa: " + tarefa.getNome() +
+                        " Data de Inicio: " + tarefa.getInicio() +
+                        " Data de Fim: " + tarefa.getFim() +
+                        " Status: " + tarefa.getStatus() +
+                        " Prioridade: " + tarefa.getPrioridade());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
