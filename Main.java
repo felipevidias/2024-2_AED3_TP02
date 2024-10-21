@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class App {
+public class Main {
 
   public static void main(String[] args) throws Exception {
     CrudTarefas crudTarefas = new CrudTarefas();
@@ -394,7 +394,7 @@ public class App {
       // Implementar a criação da categoria
     }
 
-    public ArrayList<App.Tarefa> read(String nomeCategoria) {
+    public ArrayList<Main.Tarefa> read(String nomeCategoria) {
       // TODO Auto-generated method stub
       throw new UnsupportedOperationException("Unimplemented method 'read'");
     }
