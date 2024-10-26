@@ -8,8 +8,40 @@
 Este projeto tem como objetivo estender um sistema CRUD genérico com a implementação de índices indiretos e o relacionamento 1:N entre as entidades `Tarefa` e `Categoria`. Utilizamos estruturas de dados avançadas, como a árvore B+, para realizar buscas eficientes e garantir a integridade entre as entidades relacionadas.
 
 ---
-
 ## Descrição das Classes e Métodos
+
+### Classe Tarefa
+
+A classe Tarefa representa as tarefas que serão manipuladas no sistema. Cada tarefa possui atributos como nome, data de início, data de fim, status, prioridade, e um idCategoria, que define a qual categoria essa tarefa pertence.
+
+#### Atributos:
+- **int id**: Identificador único da tarefa.
+- **String nome**: Nome da tarefa.
+- **LocalDate inicio**: Data de início da tarefa.
+- **LocalDate fim**: Data de fim da tarefa.
+- **Byte status**: Status da tarefa (1 para ativo, 0 para inativo).
+- **Byte prioridade**: Prioridade da tarefa.
+- **int idCategoria**: ID da categoria associada à tarefa (chave estrangeira).
+
+#### Métodos:
+- **void setId(int id)**: Define o ID da tarefa.
+- **void setNome(String nome)**: Define o nome da tarefa.
+- **void setInicio(LocalDate inicio)**: Define a data de início da tarefa.
+- **void setFim(LocalDate fim)**: Define a data de fim da tarefa.
+- **void setStatus(Byte status)**: Define o status da tarefa.
+- **void setPrioridade(Byte prioridade)**: Define a prioridade da tarefa.
+- **void setIdCategoria(int idCategoria)**: Define o ID da categoria associada.
+- **int getId()**: Retorna o ID da tarefa.
+- **String getNome()**: Retorna o nome da tarefa.
+- **LocalDate getInicio()**: Retorna a data de início da tarefa.
+- **LocalDate getFim()**: Retorna a data de fim da tarefa.
+- **Byte getStatus()**: Retorna o status da tarefa.
+- **Byte getPrioridade()**: Retorna a prioridade da tarefa.
+- **int getIdCategoria()**: Retorna o ID da categoria associada à tarefa.
+- **byte[] toByteArray()**: Converte a tarefa para um array de bytes para armazenamento.
+- **void fromByteArray(byte[] array)**: Constrói a tarefa a partir de um array de bytes.
+
+---
 
 ### Classe `Arquivo`
 
