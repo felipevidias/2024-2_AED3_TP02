@@ -185,28 +185,6 @@ A classe `NomeId` representa um registro que armazena um nome e um ID associado,
 
 ---
 
-### Classe `Tarefa`
-
-A classe `Tarefa` representa uma tarefa individual associada a uma categoria. Cada tarefa possui um nome, descrição e status.
-
-#### Atributos:
-- **`int id`**: Identificador único da tarefa.
-- **`String nome`**: Nome da tarefa.
-- **`String descricao`**: Descrição detalhada da tarefa.
-- **`boolean status`**: Status da tarefa (concluída ou não).
-
-#### Métodos:
-- **`Tarefa(String nome, String descricao, boolean status)`**: Construtor que inicializa uma nova tarefa.
-- **`void setId(int id)`**: Define o ID da tarefa.
-- **`int getId()`**: Retorna o ID da tarefa.
-- **`String getNome()`**: Retorna o nome da tarefa.
-- **`String getDescricao()`**: Retorna a descrição da tarefa.
-- **`boolean isConcluida()`**: Verifica se a tarefa está concluída.
-- **`void marcarComoConcluida()`**: Marca a tarefa como concluída.
-- **`byte[] toByteArray()`**: Converte a tarefa para um array de bytes.
-
----
-
 ## Estruturas e Técnicas Utilizadas
 
 - **Árvores B+**: Implementamos árvores B+ para indexação eficiente das entidades, principalmente para a busca de categorias e tarefas.
