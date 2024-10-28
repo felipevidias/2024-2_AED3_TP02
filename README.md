@@ -19,7 +19,7 @@ O sistema é um CRUD aprimorado que implementa índices indiretos e um relaciona
 
 ## Descrição das Classes e Métodos
 
-Classe Tarefa
+## Classe Tarefa
 
 A classe Tarefa representa uma tarefa com atributos essenciais que podem ser associados a uma Categoria através de um identificador de categoria, garantindo o relacionamento 1
 .
@@ -36,7 +36,7 @@ Métodos:
     fromBytes(byte[] bytes): Reconstrói o objeto Tarefa a partir de um array de bytes.
     exibirTarefa(): Exibe as informações da tarefa, incluindo o nome da categoria vinculada, se disponível.
 
-Classe Categoria
+## Classe Categoria
 
 A classe Categoria representa uma categoria de tarefas, permitindo a organização e o agrupamento das tarefas associadas.
 Atributos:
@@ -50,7 +50,7 @@ Métodos:
     fromBytes(byte[] bytes): Reconstrói o objeto Categoria a partir de um array de bytes.
     exibirCategoria(): Exibe as informações da categoria.
 
-Classe ArquivoCategorias
+## Classe ArquivoCategorias
 
 A classe ArquivoCategorias lida com as operações de entrada e saída para armazenar e recuperar categorias de um arquivo, utilizando hash extensível para organização eficiente.
 Atributos:
@@ -64,7 +64,7 @@ Métodos:
     atualizar(Categoria categoria): Atualiza uma categoria existente.
     remover(int id): Remove uma categoria pelo ID e atualiza o índice.
 
-Classe ArquivoTarefas
+## Classe ArquivoTarefas
 
 A classe ArquivoTarefas gerencia a entrada e saída de dados para as tarefas, implementando um índice para gerenciar a relação com categorias.
 Atributos:
@@ -80,7 +80,7 @@ Métodos:
     atualizar(Tarefa tarefa): Atualiza uma tarefa existente.
     remover(int id): Remove uma tarefa pelo ID e gerencia o índice.
 
-Classe ArvoreBMais
+## Classe ArvoreBMais
 
 A classe ArvoreBMais implementa a árvore B+ para organizar e indexar o relacionamento entre categorias e tarefas.
 Atributos:
@@ -93,7 +93,7 @@ Métodos:
     remover(int chave): Remove uma chave específica da árvore B+.
     buscar(int chave): Busca uma chave específica na árvore B+.
 
-Classe HashExtensivel
+## Classe HashExtensivel
 
 A classe HashExtensivel implementa um hash extensível para otimizar a busca de registros de forma dinâmica e eficiente.
 Atributos:
@@ -107,7 +107,7 @@ Métodos:
     buscar(int chave): Busca um valor específico pelo hash da chave.
     remover(int chave): Remove um valor específico do hash.
 
-Classe Main
+## Classe Main
 
 A classe Main serve como ponto de entrada do programa e controla a interface de usuário e as operações CRUD.
 Métodos:
