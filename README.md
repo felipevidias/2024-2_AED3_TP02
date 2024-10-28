@@ -19,116 +19,121 @@ O sistema é um CRUD aprimorado que implementa índices indiretos e um relaciona
 
 ## Descrição das Classes e Métodos
 
-### Classe Tarefa
+Classe Tarefa
 
-A classe Tarefa representa uma tarefa com atributos essenciais, que podem ser associados a uma Categoria através de um identificador de categoria, garantindo o relacionamento 1:N.
+A classe Tarefa representa uma tarefa com atributos essenciais que podem ser associados a uma Categoria através de um identificador de categoria, garantindo o relacionamento 1
+.
+Atributos:
 
-#### Atributos:
-- **int id**: ID único da tarefa.
-- **String nome**: Nome da tarefa.
-- **String descricao**: Descrição da tarefa.
-- **int idCategoria**: ID da categoria à qual a tarefa pertence (chave estrangeira).
+    int id: ID único da tarefa.
+    String nome: Nome da tarefa.
+    String descricao: Descrição da tarefa.
+    int idCategoria: ID da categoria à qual a tarefa pertence (chave estrangeira).
 
-#### Métodos:
-- **toBytes()**: Serializa o objeto Tarefa para um array de bytes, facilitando o armazenamento em arquivo.
-- **fromBytes(byte[] bytes)**: Reconstrói o objeto Tarefa a partir de um array de bytes.
-- **exibirTarefa()**: Exibe as informações da tarefa, incluindo o nome da categoria vinculada, se disponível.
+Métodos:
 
----
+    toBytes(): Serializa o objeto Tarefa para um array de bytes, facilitando o armazenamento em arquivo.
+    fromBytes(byte[] bytes): Reconstrói o objeto Tarefa a partir de um array de bytes.
+    exibirTarefa(): Exibe as informações da tarefa, incluindo o nome da categoria vinculada, se disponível.
 
-### Classe Categoria
+Classe Categoria
 
-A classe Categoria define uma categoria, que pode ter múltiplas tarefas associadas a ela, implementando a parte N do relacionamento 1:N.
+A classe Categoria representa uma categoria de tarefas, permitindo a organização e o agrupamento das tarefas associadas.
+Atributos:
 
-#### Atributos:
-- **int id**: ID único da categoria.
-- **String nome**: Nome da categoria.
+    int id: ID único da categoria.
+    String nome: Nome da categoria.
 
-#### Métodos:
-- **toBytes()**: Serializa o objeto Categoria para um array de bytes.
-- **fromBytes(byte[] bytes)**: Reconstrói o objeto Categoria a partir de um array de bytes.
-- **exibirCategoria()**: Exibe as informações da categoria, incluindo a lista de tarefas associadas.
+Métodos:
 
----
+    toBytes(): Serializa o objeto Categoria para um array de bytes.
+    fromBytes(byte[] bytes): Reconstrói o objeto Categoria a partir de um array de bytes.
+    exibirCategoria(): Exibe as informações da categoria.
 
-### Classe Arquivo
+Classe ArquivoCategorias
 
-A classe abstrata Arquivo define métodos e atributos comuns para a manipulação de arquivos em disco e manipulação dos objetos Tarefa e Categoria.
+A classe ArquivoCategorias lida com as operações de entrada e saída para armazenar e recuperar categorias de um arquivo, utilizando hash extensível para organização eficiente.
+Atributos:
 
-#### Atributos:
-- **String nomeArquivo**: Nome do arquivo onde os dados serão salvos.
-- **RandomAccessFile raf**: Acesso ao arquivo.
+    HashExtensivel<ParNomeId> hashCategorias: Índice indireto para acesso rápido às categorias pelo nome.
 
-#### Métodos:
-- **inserir(Object obj)**: Insere um novo objeto no arquivo e retorna seu ID.
-- **ler(int id)**: Lê um objeto com um ID específico no arquivo.
-- **atualizar(int id, Object obj)**: Atualiza um objeto específico no arquivo.
-- **remover(int id)**: Remove um objeto do arquivo.
-- **listar()**: Lista todos os objetos armazenados no arquivo.
+Métodos:
 
----
+    criar(Categoria categoria): Cria uma nova categoria e a adiciona ao arquivo.
+    ler(int id): Lê uma categoria específica pelo ID.
+    atualizar(Categoria categoria): Atualiza uma categoria existente.
+    remover(int id): Remove uma categoria pelo ID e atualiza o índice.
 
-### Classe ArquivoCategorias
+Classe ArquivoTarefas
 
-A classe ArquivoCategorias é especializada para operações de CRUD com categorias e manipulação de tarefas associadas, integrando-se com uma árvore B+ para a indexação e vinculação 1:N.
+A classe ArquivoTarefas gerencia a entrada e saída de dados para as tarefas, implementando um índice para gerenciar a relação com categorias.
+Atributos:
 
-#### Atributos:
-- **ArvoreBMais<NomeId> arvoreB**: Estrutura de árvore B+ que indexa as categorias pelo nome.
+    HashExtensivel<ParIDcIDt> hashTarefas: Índice indireto de tarefas para buscas rápidas.
+    ArvoreBMais arvoreCategorias: Relacionamento 1
+    entre categorias e tarefas.
 
-#### Métodos:
-- **inserirCategoria(Categoria categoria)**: Insere uma nova categoria no arquivo e a indexa na árvore B+.
-- **lerCategoria(int id)**: Lê uma categoria específica no arquivo.
-- **atualizarCategoria(int id, Categoria categoria)**: Atualiza uma categoria no arquivo.
-- **removerCategoria(int id)**: Remove uma categoria e verifica se há tarefas associadas antes de excluí-la.
+Métodos:
 
----
+    criar(Tarefa tarefa): Adiciona uma nova tarefa ao arquivo.
+    ler(int id): Lê uma tarefa específica pelo ID.
+    atualizar(Tarefa tarefa): Atualiza uma tarefa existente.
+    remover(int id): Remove uma tarefa pelo ID e gerencia o índice.
 
-### Classe ArquivoTarefas
+Classe ArvoreBMais
 
-A classe ArquivoTarefas gerencia operações de CRUD para tarefas, incluindo métodos para listar tarefas por categoria e garantir que a associação à categoria seja válida.
+A classe ArvoreBMais implementa a árvore B+ para organizar e indexar o relacionamento entre categorias e tarefas.
+Atributos:
 
-#### Atributos:
-- **ArvoreBMais<NomeId> arvoreB**: Estrutura de árvore B+ para indexar tarefas pelo nome e ID da categoria.
+    Pagina raiz: Raiz da árvore B+, que gerencia o relacionamento hierárquico entre as entidades.
 
-#### Métodos:
-- **inserirTarefa(Tarefa tarefa)**: Insere uma nova tarefa e atualiza a árvore B+ com o índice indireto da categoria.
-- **lerTarefa(int id)**: Lê uma tarefa específica do arquivo.
-- **atualizarTarefa(int id, Tarefa tarefa)**: Atualiza uma tarefa e verifica a validade da categoria.
-- **removerTarefa(int id)**: Remove uma tarefa, desvinculando-a da categoria correspondente.
-- **listarTarefasPorCategoria(int idCategoria)**: Lista todas as tarefas associadas a uma categoria específica.
+Métodos:
 
----
+    inserir(int chave, int valor): Insere uma nova chave e valor na árvore B+.
+    remover(int chave): Remove uma chave específica da árvore B+.
+    buscar(int chave): Busca uma chave específica na árvore B+.
 
-### Classe NomeIDTarefa
+Classe HashExtensivel
 
-A classe `NomeIDTarefa` representa o vínculo entre o nome de uma tarefa e seu identificador, possibilitando a implementação de um índice indireto para tarefas usando hash extensível.
+A classe HashExtensivel implementa um hash extensível para otimizar a busca de registros de forma dinâmica e eficiente.
+Atributos:
 
-#### Atributos:
-- **String nome**: Nome da tarefa.
-- **int idTarefa**: Identificador único da tarefa.
-- **short TAMANHO**: Constante que define o tamanho do registro no hash extensível (54 bytes).
+    Diretorio diretorio: Diretório de buckets para armazenar os dados.
+    Cesto[] cestos: Array de cestos que armazena dados em buckets.
 
-#### Métodos:
-- **getNome()**: Retorna o nome da tarefa.
-- **getIDTarefa()**: Retorna o ID da tarefa.
-- **hashCode()**: Retorna o hash gerado a partir do nome, utilizado para inserção e busca na hash extensível.
-- **size()**: Retorna o tamanho do registro.
-- **toString()**: Retorna uma representação em String da tarefa no formato "(nome;idTarefa)".
-- **toByteArray()**: Serializa os atributos do objeto `NomeIDTarefa` para um array de bytes.
-- **fromByteArray(byte[] b)**: Deserializa um array de bytes para reconstruir um objeto `NomeIDTarefa`.
+Métodos:
+
+    inserir(int chave, int valor): Insere um par chave-valor no hash.
+    buscar(int chave): Busca um valor específico pelo hash da chave.
+    remover(int chave): Remove um valor específico do hash.
+
+Classe Main
+
+A classe Main serve como ponto de entrada do programa e controla a interface de usuário e as operações CRUD.
+Métodos:
+
+    main(String[] args): Inicializa o sistema, carregando as classes de arquivo e controlando as operações do usuário.
 
 ---
 
-### Classe Popular
+## Experiência de Desenvolvimento
 
-A classe `Popular` é responsável por criar e popular o sistema com categorias iniciais necessárias para o registro de tarefas.
-
-#### Atributos:
-- **Arquivo\<Categoria> categorias**: Instância de `Arquivo` para gerenciar o armazenamento de objetos do tipo `Categoria`.
-- **Categoria categoria**: Objeto de categoria que será manipulado e adicionado ao sistema.
-
-#### Métodos:
-- **create(String nomeCategoria)**: Cria uma nova categoria com o nome especificado e a insere no arquivo de categorias.
-- **list()**: Lista todas as categorias existentes no arquivo e as exibe, auxiliando na visualização das categorias disponíveis no sistema.
+Durante o desenvolvimento deste trabalho prático, implementamos todos os requisitos especificados e aplicamos estruturas de dados para garantir a eficiência e integridade do sistema. As principais dificuldades incluíram a implementação correta da árvore B+ e a integração da hash extensível, especialmente no tratamento de remoções e na validação do relacionamento entre tarefas e categorias. Apesar desses desafios, o sistema está completo e funcionando conforme esperado, com todos os testes de integridade e operações CRUD implementados e testados.
 
 ---
+
+## Checklist
+
+- O CRUD (com índice direto) de categorias foi implementado? **Sim**
+- Há um índice indireto de nomes para as categorias? **Sim**
+- O atributo de ID de categoria, como chave estrangeira, foi criado na classe Tarefa? **Sim**
+- Há uma árvore B+ que registre o relacionamento 1:N entre tarefas e categorias? **Sim**
+- É possível listar as tarefas de uma categoria? **Sim**
+- A remoção de categorias checa se há alguma tarefa vinculada a ela? **Sim**
+- A inclusão da categoria em uma tarefa se limita às categorias existentes? **Sim**
+- O trabalho está funcionando corretamente? **Sim**
+- O trabalho está completo? **Sim**
+- O trabalho é original e não a cópia de um trabalho de outro grupo? **Sim**
+
+---
+
